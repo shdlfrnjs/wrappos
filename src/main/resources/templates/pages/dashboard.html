@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/layout :: layout(~{::content})}">
+<th:block th:fragment="content">
+
+  <section class="page-head">
+    <div>
+      <h1>Dashboard v3</h1>
+    </div>
+    <div class="breadcrumb">
+      <span>Home</span>
+      <span>/</span>
+      <span>Dashboard v3</span>
+    </div>
+  </section>
+
+  <section class="dashboard-grid top-grid">
+    <div class="card chart-card">
+      <div class="card-header">
+        <h3>Online Store Visitors</h3>
+        <a href="#">View Report</a>
+      </div>
+      <div class="card-summary">
+        <div>
+          <div class="big-number">820</div>
+          <div class="muted">Visitors Over Time</div>
+        </div>
+        <div class="trend up">↑ 12.5%<br><span>Since last week</span></div>
+      </div>
+      <div class="fake-chart line-chart"></div>
+    </div>
+
+    <div class="card chart-card">
+      <div class="card-header">
+        <h3>Sales</h3>
+        <a href="#">View Report</a>
+      </div>
+      <div class="card-summary">
+        <div>
+          <div class="big-number">$18,230.00</div>
+          <div class="muted">Sales Over Time</div>
+        </div>
+        <div class="trend up">↑ 33.1%<br><span>Since last month</span></div>
+      </div>
+      <div class="fake-chart bar-chart"></div>
+    </div>
+  </section>
+
+  <section class="dashboard-grid bottom-grid">
+    <div class="card table-card">
+      <div class="card-header">
+        <h3>Products</h3>
+      </div>
+
+      <table class="product-table">
+        <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Sales</th>
+          <th>More</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>Some Product</td>
+          <td>$13 USD</td>
+          <td class="up">↑ 12% &nbsp; 12,000 Sold</td>
+          <td>⌕</td>
+        </tr>
+        <tr>
+          <td>Another Product</td>
+          <td>$29 USD</td>
+          <td class="down">↓ 0.5% &nbsp; 123,234 Sold</td>
+          <td>⌕</td>
+        </tr>
+        <tr>
+          <td>Amazing Product</td>
+          <td>$1,230 USD</td>
+          <td class="up">↑ 3% &nbsp; 198 Sold</td>
+          <td>⌕</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card overview-card">
+      <div class="card-header">
+        <h3>Online Store Overview</h3>
+      </div>
+
+      <div class="overview-item">
+        <div>↻</div>
+        <div>
+          <strong class="up">↑ 12%</strong>
+          <p>CONVERSION RATE</p>
+        </div>
+      </div>
+
+      <div class="overview-item">
+        <div>🛒</div>
+        <div>
+          <strong class="up">↑ 0.8%</strong>
+          <p>SALES RATE</p>
+        </div>
+      </div>
+
+      <div class="overview-item">
+        <div>◎</div>
+        <div>
+          <strong class="down">↓ 1%</strong>
+          <p>REGISTRATION RATE</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</th:block>
+</html>

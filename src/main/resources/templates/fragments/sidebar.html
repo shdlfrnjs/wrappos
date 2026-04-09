@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="sidebar">
+    <div class="brand">
+        <div class="brand-logo">W</div>
+        <div class="brand-text">WRAPPOS</div>
+    </div>
+
+    <div class="profile">
+        <div class="profile-image"></div>
+        <div class="profile-name">Boosst</div>
+    </div>
+
+    <nav class="side-menu">
+        <a th:href="@{/dashboard}" class="menu-item active">Dashboard</a>
+        <a href="#" class="menu-sub">Dashboard 1v1</a>
+        <a href="#" class="menu-sub selected">Dashboarㄴㅇㄴㅇd v2</a>
+        <a href="#" class="menu-sub selected">Das2hboard v3</a>
+
+        <a href="#" class="menu-item">Widgets</a>
+        <a href="#" class="menu-item">Chㄴㅇㄴㅇarts</a>
+        <a href="#" class="menu-item">UI Elements</a>
+        <a href="#" class="menu-item">Forms</a>
+        <a href="#" class="menu-item">Tables</a>
+
+        <div class="menu-section">EXAMPLES</div>
+
+        <a href="#" class="menu-item">Calendar</a>
+        <a href="#" class="menu-item">Mailbox</a>
+        <a href="#" class="menu-item">Pages</a>
+        <a href="#" class="menu-item">Extras</a>
+    </nav>
+</div>
+</body>
+</html>

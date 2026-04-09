@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="header" class="header-inner">
+  <div class="header-left">
+    <button type="button" class="menu-btn">☰</button>
+    <nav class="top-nav">
+      <a th:href="@{/dashboard}" class="top-link active">Home</a>
+      <a href="#" class="top-link">Contact</a>
+    </nav>
+  </div>
+
+  <div class="header-right">
+    <div class="search-box">
+      <input type="text" placeholder="Search">
+      <button type="button">⌕</button>
+    </div>
+
+    <div class="header-icons">
+      <span class="icon-badge">3</span>
+      <span class="icon-badge">15</span>
+      <span class="icon-grid">▦</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
