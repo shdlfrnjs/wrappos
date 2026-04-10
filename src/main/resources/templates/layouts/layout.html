@@ -1,33 +1,36 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title th:text="${pageTitle} ?: 'WRAPPOS ADMIN'">WRAPPOS ADMIN</title>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
-  <link rel="stylesheet" th:href="@{/css/admin.css}">
+<head>
+    <th:block th:replace="~{common/config :: config}"></th:block>
+
+    <title th:text="${pageTitle} ?: 'WRAPPOS ADMIN'">WRAPPOS ADMIN</title>
+
+    <!-- 페이지별 CSS / JS / meta 추가 자리 -->
+    <th:block layout:fragment="pageHead"></th:block>
 </head>
+
 <body>
 <div class="wrapper">
-  <aside class="sidebar">
-    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-  </aside>
+    <aside class="sidebar">
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    </aside>
 
-  <div class="main">
-    <header class="header">
-      <div th:replace="~{fragments/header :: header}"></div>
-    </header>
+    <div class="main">
+        <header class="header">
+            <div th:replace="~{fragments/header :: header}"></div>
+        </header>
 
-    <main class="content">
-      <div class="content-inner" th:replace="${content}">
-        본문 영역
-      </div>
-    </main>
+        <main class="content">
+            <div class="content-inner" layout:fragment="content"></div>
+        </main>
 
-    <footer class="footer">
-      <div th:replace="~{fragments/footer :: footer}"></div>
-    </footer>
-  </div>
+        <footer class="footer">
+            <div th:replace="~{fragments/footer :: footer}"></div>
+        </footer>
+    </div>
 </div>
 </body>
 </html>
