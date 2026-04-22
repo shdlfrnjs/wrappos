@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 <div th:fragment="sidebar">
     <div class="brand">
@@ -9,7 +11,7 @@
 
     <div class="profile">
         <div class="profile-image"></div>
-        <div class="profile-name">Boosst</div>
+        <div class="profile-name" sec:authentication="principal.bizName"></div>
     </div>
 
     <nav class="side-menu">

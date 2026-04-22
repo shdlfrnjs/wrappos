@@ -1,10 +1,517 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}" href="/css/login.css">
+    <link rel="stylesheet" th:href="@{/css/signup.css}" href="/css/signup.css">
 </head>
 <body>
+
+<div class="login-container">
+    <div class="login-box">
+        <h1 class="login-title">WRAPPOS</h1>
+        <p class="login-subtitle">for ADMIN</p>
+
+        <form th:action="@{/login}" method="post" class="login-form">
+            <div class="input-group">
+                <label for="username">아이디</label>
+                <input type="text" id="username" name="username" placeholder="아이디를 입력하세요">
+            </div>
+
+            <div class="input-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요">
+            </div>
+
+            <div th:if="${param.error}" class="login-error-msg">
+                아이디 또는 비밀번호가 올바르지 않습니다.
+            </div>
+            <button type="submit" class="btn btn-login">로그인</button>
+            <button type="button" class="btn btn-signup" id="openSignupModalBtn">회원가입</button>
+        </form>
+    </div>
+</div>
+
+<!-- 회원가입 모달 -->
+<div class="modal-overlay" id="signupModal">
+    <div class="signup-modal">
+        <div class="modal-header">
+            <h2>회원가입</h2>
+            <button type="button" class="close-btn" id="closeSignupModalBtn">&times;</button>
+        </div>
+
+        <form id="signupForm" class="modal-body" autocomplete="off">
+            <div class="form-grid">
+                <div class="form-group span-2">
+                    <label for="userId">아이디</label>
+                    <div class="input-row">
+                        <input type="text" id="userId" name="userId" placeholder="아이디를 입력하세요" maxlength="50">
+                        <button type="button" class="btn-check" id="checkUserIdBtn">중복확인</button>
+                    </div>
+                    <div class="field-msg" id="userIdMsg"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userPw">비밀번호</label>
+                    <input type="password" id="userPw" name="userPw" placeholder="비밀번호를 입력하세요" maxlength="255">
+                    <div class="field-msg" id="userPwMsg"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userPwConfirm">비밀번호 확인</label>
+                    <input type="password" id="userPwConfirm" name="userPwConfirm" placeholder="비밀번호를 다시 입력하세요"
+                           maxlength="255">
+                    <div class="field-msg" id="userPwConfirmMsg"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bizNoDisplay">사업자등록번호</label>
+                    <input type="text" id="bizNoDisplay" placeholder="123-45-67890" maxlength="12">
+                    <input type="hidden" id="bizNo" name="bizNo">
+                    <div class="field-msg" id="bizNoMsg"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bizName">상호</label>
+                    <input type="text" id="bizName" name="bizName" placeholder="상호명을 입력하세요">
+                    <div class="field-msg" id="bizNameMsg"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="ownerName">대표자명</label>
+                    <input type="text" id="ownerName" name="ownerName" placeholder="대표자명을 입력하세요">
+                    <div class="field-msg" id="ownerNameMsg"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="ownerTel">전화번호</label>
+                    <input type="text" id="ownerTel" name="ownerTel" placeholder="전화번호를 입력하세요">
+                    <div class="field-msg" id="ownerTelMsg"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="openDt">개업연월일</label>
+                    <input type="date" id="openDt" name="openDt" min="1900-01-01" max="9999-12-31">
+                    <div class="field-msg" id="openDtMsg"></div>
+                </div>
+
+                <div class="form-group span-2">
+                    <label for="address">주소</label>
+                    <input type="text" id="address" name="address" placeholder="주소를 입력하세요">
+                    <div class="field-msg" id="addressMsg"></div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-footer btn-cancel" id="cancelSignupModalBtn">취소</button>
+                <button type="submit" class="btn-footer btn-submit">가입</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 성공 모달 -->
+<div class="modal-overlay" id="signupSuccessModal">
+    <div class="success-modal">
+        <div class="success-modal-body">
+            <p class="success-message">회원가입이 완료되었습니다.</p>
+            <button type="button" class="btn-success-confirm" id="successConfirmBtn">확인</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('signupModal');
+    const openBtn = document.getElementById('openSignupModalBtn');
+    const closeBtn = document.getElementById('closeSignupModalBtn');
+    const cancelBtn = document.getElementById('cancelSignupModalBtn');
+    const signupForm = document.getElementById('signupForm');
+
+    const userIdEl = document.getElementById('userId');
+    const checkUserIdBtn = document.getElementById('checkUserIdBtn');
+    const userPwEl = document.getElementById('userPw');
+    const userPwConfirmEl = document.getElementById('userPwConfirm');
+
+    const bizNoDisplayEl = document.getElementById('bizNoDisplay');
+    const bizNoHiddenEl = document.getElementById('bizNo');
+
+    const bizNameEl = document.getElementById('bizName');
+    const ownerNameEl = document.getElementById('ownerName');
+    const ownerTelEl = document.getElementById('ownerTel');
+    const openDtEl = document.getElementById('openDt');
+    const addressEl = document.getElementById('address');
+
+    const signupSuccessModal = document.getElementById('signupSuccessModal');
+    const successConfirmBtn = document.getElementById('successConfirmBtn');
+
+    let userIdChecked = false;
+    let checkedUserIdValue = '';
+
+    function openModal() {
+        modal.classList.add('active');
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+        resetSignupForm();
+    }
+
+    function openSuccessModal() {
+        signupSuccessModal.classList.add('active');
+    }
+
+    function closeSuccessModal() {
+        signupSuccessModal.classList.remove('active');
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    signupSuccessModal.addEventListener('click', function (e) {
+        if (e.target === signupSuccessModal) {
+            closeSuccessModal();
+        }
+    });
+
+    successConfirmBtn.addEventListener('click', function () {
+        window.location.href = '/login';
+    });
+
+    function setFieldError(inputEl, msgId, message) {
+        const msgEl = document.getElementById(msgId);
+        inputEl.classList.remove('input-success');
+        inputEl.classList.add('input-error');
+        msgEl.classList.remove('success');
+        msgEl.classList.add('error');
+        msgEl.textContent = message;
+    }
+
+    function setFieldSuccess(inputEl, msgId, message) {
+        const msgEl = document.getElementById(msgId);
+        inputEl.classList.remove('input-error');
+        inputEl.classList.add('input-success');
+        msgEl.classList.remove('error');
+        msgEl.classList.add('success');
+        msgEl.textContent = message;
+    }
+
+    function clearFieldMessage(inputEl, msgId) {
+        const msgEl = document.getElementById(msgId);
+        inputEl.classList.remove('input-error');
+        inputEl.classList.remove('input-success');
+        msgEl.classList.remove('error');
+        msgEl.classList.remove('success');
+        msgEl.textContent = '';
+    }
+
+    function clearAllMessages() {
+        clearFieldMessage(userIdEl, 'userIdMsg');
+        clearFieldMessage(userPwEl, 'userPwMsg');
+        clearFieldMessage(userPwConfirmEl, 'userPwConfirmMsg');
+        clearFieldMessage(bizNoDisplayEl, 'bizNoMsg');
+        clearFieldMessage(bizNameEl, 'bizNameMsg');
+        clearFieldMessage(ownerNameEl, 'ownerNameMsg');
+        clearFieldMessage(ownerTelEl, 'ownerTelMsg');
+        clearFieldMessage(openDtEl, 'openDtMsg');
+        clearFieldMessage(addressEl, 'addressMsg');
+    }
+
+    function resetSignupForm() {
+        signupForm.reset();
+        clearAllMessages();
+        userIdChecked = false;
+        checkedUserIdValue = '';
+        bizNoHiddenEl.value = '';
+        bizNoDisplayEl.value = '';
+    }
+
+    function validateRequired(inputEl, msgId, label) {
+        const value = inputEl.value.trim();
+
+        if (!value) {
+            setFieldError(inputEl, msgId, label + '을(를) 입력하세요.');
+            return false;
+        }
+
+        clearFieldMessage(inputEl, msgId);
+        return true;
+    }
+
+    function validatePasswordConfirm() {
+        const pw = userPwEl.value;
+        const pwConfirm = userPwConfirmEl.value;
+
+        if (!pwConfirm) {
+            setFieldError(userPwConfirmEl, 'userPwConfirmMsg', '비밀번호 확인을 입력하세요.');
+            return false;
+        }
+
+        if (pw !== pwConfirm) {
+            setFieldError(userPwConfirmEl, 'userPwConfirmMsg', '비밀번호가 일치하지 않습니다.');
+            return false;
+        }
+
+        clearFieldMessage(userPwConfirmEl, 'userPwConfirmMsg');
+        return true;
+    }
+
+    function formatBizNo(value) {
+        const numbers = value.replace(/\D/g, '').slice(0, 10);
+
+        if (numbers.length <= 3) {
+            return numbers;
+        }
+
+        if (numbers.length <= 5) {
+            return numbers.slice(0, 3) + '-' + numbers.slice(3);
+        }
+
+        return numbers.slice(0, 3) + '-' + numbers.slice(3, 5) + '-' + numbers.slice(5);
+    }
+
+    function getBizNoNumbers() {
+        return bizNoDisplayEl.value.replace(/\D/g, '').slice(0, 10);
+    }
+
+    function validateBizNo() {
+        const numbers = getBizNoNumbers();
+
+        if (!numbers) {
+            setFieldError(bizNoDisplayEl, 'bizNoMsg', '사업자등록번호를 입력하세요.');
+            return false;
+        }
+
+        if (numbers.length !== 10) {
+            setFieldError(bizNoDisplayEl, 'bizNoMsg', '사업자등록번호는 숫자 10자리여야 합니다.');
+            return false;
+        }
+
+        clearFieldMessage(bizNoDisplayEl, 'bizNoMsg');
+        return true;
+    }
+
+    function applyServerFieldErrors(fieldErrors) {
+        if (fieldErrors.userId) {
+            setFieldError(userIdEl, 'userIdMsg', fieldErrors.userId);
+        }
+        if (fieldErrors.userPw) {
+            setFieldError(userPwEl, 'userPwMsg', fieldErrors.userPw);
+        }
+        if (fieldErrors.userPwConfirm) {
+            setFieldError(userPwConfirmEl, 'userPwConfirmMsg', fieldErrors.userPwConfirm);
+        }
+        if (fieldErrors.bizNo) {
+            setFieldError(bizNoDisplayEl, 'bizNoMsg', fieldErrors.bizNo);
+        }
+        if (fieldErrors.bizName) {
+            setFieldError(bizNameEl, 'bizNameMsg', fieldErrors.bizName);
+        }
+        if (fieldErrors.ownerName) {
+            setFieldError(ownerNameEl, 'ownerNameMsg', fieldErrors.ownerName);
+        }
+        if (fieldErrors.ownerTel) {
+            setFieldError(ownerTelEl, 'ownerTelMsg', fieldErrors.ownerTel);
+        }
+        if (fieldErrors.openDt) {
+            setFieldError(openDtEl, 'openDtMsg', fieldErrors.openDt);
+        }
+        if (fieldErrors.address) {
+            setFieldError(addressEl, 'addressMsg', fieldErrors.address);
+        }
+
+        if (fieldErrors.common) {
+            alert(fieldErrors.common);
+        }
+    }
+
+    checkUserIdBtn.addEventListener('click', async function () {
+        const userId = userIdEl.value.trim();
+
+        if (!validateRequired(userIdEl, 'userIdMsg', '아이디')) {
+            userIdChecked = false;
+            checkedUserIdValue = '';
+            return;
+        }
+
+        try {
+            const response = await fetch('/signup/check-user-id?userId=' + encodeURIComponent(userId), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                setFieldError(userIdEl, 'userIdMsg', '중복확인 중 오류가 발생했습니다.');
+                userIdChecked = false;
+                checkedUserIdValue = '';
+                return;
+            }
+
+            const data = await response.json();
+
+            if (data.duplicated) {
+                setFieldError(userIdEl, 'userIdMsg', '이미 사용 중인 아이디입니다.');
+                userIdChecked = false;
+                checkedUserIdValue = '';
+            } else {
+                setFieldSuccess(userIdEl, 'userIdMsg', '사용 가능한 아이디입니다.');
+                userIdChecked = true;
+                checkedUserIdValue = userId;
+            }
+        } catch (e) {
+            setFieldError(userIdEl, 'userIdMsg', '중복확인 중 오류가 발생했습니다.');
+            userIdChecked = false;
+            checkedUserIdValue = '';
+        }
+    });
+
+    userIdEl.addEventListener('input', function () {
+        clearFieldMessage(userIdEl, 'userIdMsg');
+        userIdChecked = false;
+        checkedUserIdValue = '';
+    });
+
+    userPwEl.addEventListener('input', function () {
+        clearFieldMessage(userPwEl, 'userPwMsg');
+        if (userPwConfirmEl.value) {
+            validatePasswordConfirm();
+        }
+    });
+
+    userPwConfirmEl.addEventListener('input', function () {
+        validatePasswordConfirm();
+    });
+
+    bizNoDisplayEl.addEventListener('input', function () {
+        this.value = formatBizNo(this.value);
+        bizNoHiddenEl.value = getBizNoNumbers();
+        clearFieldMessage(bizNoDisplayEl, 'bizNoMsg');
+    });
+
+    bizNameEl.addEventListener('input', function () {
+        clearFieldMessage(bizNameEl, 'bizNameMsg');
+    });
+
+    ownerNameEl.addEventListener('input', function () {
+        clearFieldMessage(ownerNameEl, 'ownerNameMsg');
+    });
+
+    ownerTelEl.addEventListener('input', function () {
+        clearFieldMessage(ownerTelEl, 'ownerTelMsg');
+    });
+
+    openDtEl.addEventListener('change', function () {
+        clearFieldMessage(openDtEl, 'openDtMsg');
+    });
+
+    addressEl.addEventListener('input', function () {
+        clearFieldMessage(addressEl, 'addressMsg');
+    });
+
+    signupForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        clearAllMessages();
+
+        let valid = true;
+        const currentUserId = userIdEl.value.trim();
+
+        if (!validateRequired(userIdEl, 'userIdMsg', '아이디')) {
+            valid = false;
+        }
+
+        if (!userIdChecked || checkedUserIdValue !== currentUserId) {
+            setFieldError(userIdEl, 'userIdMsg', '아이디 중복확인을 완료하세요.');
+            valid = false;
+        }
+
+        if (!validateRequired(userPwEl, 'userPwMsg', '비밀번호')) {
+            valid = false;
+        }
+
+        if (!validatePasswordConfirm()) {
+            valid = false;
+        }
+
+        if (!validateBizNo()) {
+            valid = false;
+        }
+
+        if (!validateRequired(bizNameEl, 'bizNameMsg', '상호')) {
+            valid = false;
+        }
+
+        if (!validateRequired(ownerNameEl, 'ownerNameMsg', '대표자명')) {
+            valid = false;
+        }
+
+        if (!valid) {
+            return;
+        }
+
+        bizNoHiddenEl.value = getBizNoNumbers();
+
+        const payload = {
+            userId: userIdEl.value.trim(),
+            userPw: userPwEl.value,
+            userPwConfirm: userPwConfirmEl.value,
+            bizNo: bizNoHiddenEl.value,
+            bizName: bizNameEl.value.trim(),
+            ownerName: ownerNameEl.value.trim(),
+            ownerTel: ownerTelEl.value.trim(),
+            openDt: openDtEl.value,
+            address: addressEl.value.trim()
+        };
+
+        try {
+            const response = await fetch('/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const contentType = response.headers.get('content-type');
+
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                console.error('JSON이 아닌 응답:', text);
+                alert('서버 응답 형식이 올바르지 않습니다.');
+                return;
+            }
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                applyServerFieldErrors(data.fieldErrors || {});
+
+                if (data.message) {
+                    alert(data.message);
+                }
+                return;
+            }
+
+            closeModal();
+            openSuccessModal();
+
+        } catch (e) {
+            console.error(e);
+            alert('회원가입 처리 중 오류가 발생했습니다.');
+        }
+    });
+</script>
 
 </body>
 </html>
